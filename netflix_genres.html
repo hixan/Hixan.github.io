@@ -9,7 +9,7 @@
 :root {
 	--movie-color:#c26e00;
 	--tv-color:#0a68ab;
-	--edge-color:#3a1515;
+	--edge-color:#555555;
 }
 .tv {
 	color: var(--tv-color);
@@ -251,7 +251,6 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 				related.push(e.source.name)
 			}
 		})
-		console.log(related)
 
 		leaf_nodes = {} // holds mapping of name to opacity for leaf nodes.
 
@@ -291,34 +290,39 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 
 		// filter text to be at either end of one of the edges
 		visual_objects.link
+			.transition()
 			.attr('stroke-opacity', get_edge_opacity)
 
 		related.forEach(d => leaf_nodes[d] = 1)
 
 
 		// set opacities. (if leaf_nodes has no attribute, it returns null and 0 opacity is set)
-		visual_objects.node_text.attr('fill-opacity',
+		visual_objects.node_text
+			.transition()
+			.attr('fill-opacity',
 			function(d) {
 
 			return leaf_nodes[d.name]? leaf_nodes[d.name]:0
 			}
 		)
-		console.log(leaf_nodes)
 	}
 
 	function mouseout(objs) {
 		objs.link
+			.transition()
 			.attr('stroke-width', d => get_edge_attribute(d, 'stroke_width'))
 			.attr('stroke', d => get_edge_attribute(d, 'stroke'))
 			.attr('stroke-opacity', d => get_edge_attribute(d, 'stroke_opacity'))
 
 		objs.node
+			.transition()
 			.attr('width', d => get_node_attribute(d, "width"))
 			.attr('height', d => get_node_attribute(d, "height"))
 			.attr('stroke', d => get_node_attribute(d, "stroke"))
 			.attr('fill', d => get_node_attribute(d, "fill"))
 
 		objs.node_text
+			.transition()
 			.text(d => get_node_attribute(d, 'text_content'))
 			.attr('stroke', d => get_node_attribute(d, 'text_stroke'))
 			.attr('fill', d => get_node_attribute(d, 'text_fill'))
