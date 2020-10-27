@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v6.js"></script>
+<!-- script src="source2.js"></script> -->
+
+<p>
+Movie and TV Show Genres.
+</p>
+<table>
+	<tr>
+		<th>On Overview &amp Hover</th>
+		<th>On Overview</th>
+		<th>On Hover</th>
+	</tr>
+	<tr>
+		<td>
+			<ul style="font-size:Small">
+				<li> Text color: brown - TV genre, Blue - Movie genre
+				<li> Font size: bigger indicates more titles have that genre.
+				<li> Edge Opacity represents how frequently one genre occurs with another.
+			</ul>
+		</td>
+		<td>
+			<ul style="font-size:Small">
+				<li> Drag nodes around to make the seperation of clusters visually appealing
+				<li> Edges are springy and nodes repel each other. (hidden relational edges have very little associated force)
+			</ul>
+		</td>
+		<td>
+			<ul style="font-size:Small">
+				<li> Only edges and nodes that are connected to the hovered node are shown
+				<li> Green Edge denotes related genres (always from other cluster)
+				<li> Nodes are made more transparent if they are less related to the current node (or its green connected nodes).
+			</ul>
+		</td>
+	</tr>
+</table>
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+<style>
+</style>
+<script>
+
+	const width = 400,
+	      height = 400,
+	      border_w = 40,
+	      border_h = 40;
+	const similar_edge = {
+		link_distance: d => 10,
+		link_strength: d => 0.01,
+		stroke_width: d => 1,
+		stroke: d => '#00FF00',
+		stroke_opacity: d => 0,
+	}
+	var maxw = 0;
+	const data_edge = {
+		link_distance: d => 0,
+		stroke_width: d => 2,
+		stroke: d => '#000000',
+		link_distance: d => 50,
+		link_strength: d => 0.1,
+		stroke_opacity: d => d.weight / maxw,
+	}
+
+	function get_edge_attribute(edge, attribute) {
+		if(edge.weight) {
+			return data_edge[attribute](edge)
+		} else {
+			return similar_edge[attribute](edge)
+		}
+	}
+
+	function nodeWidth(d) {
+		return 0
+	}
+	function nodeHeight(d) {
+		return 0
+	}
+
+	const movie_node = {
+		width: d => nodeWidth(d),
+		height: d => nodeHeight(d),
+		collide_radius: d => Math.random() * 10 + 10,
+		stroke: d => '#995500',
+		fill: d => '#839573',
+		text_content: d => d.name,
+		text_stroke: d => '#FFFFFF',
+		text_stroke_width: d => 0,
+		text_stroke_opacity: d => 0,
+		text_fill_opacity: d => 1,
+		text_fill: d => '#306155',
+	}
+	const tv_node = {
+		width: d => nodeWidth(d),
+		height: d => nodeHeight(d),
+		collide_radius: d => Math.random() * 10 + 10,
+		stroke: d => '#995500',
+		fill: d => '#839573',
+		text_content: movie_node.text_content,
+		text_stroke: movie_node.text_stroke,
+		text_stroke_width: movie_node.text_stroke_width,
+		text_stroke_opacity: movie_node.text_stroke_opacity,
+		text_fill_opacity: movie_node.text_fill_opacity,
+		text_fill: d => '#806125',
+	}
+
+	function get_node_attribute(node, attribute) {
+		if(node.type == 'movie') {
+			return movie_node[attribute](node)
+		} else {
+			return tv_node[attribute](node)
+		}
+	}
+
+	function createsimulation(svg, nodes, edges) {
+		edges.forEach(d => {
+			if(d.weight == "") {
+				d.weight = null
+				return
+			}
+			weight_norm = (
+				parseFloat(nodes[parseInt(d.source)].title_count_weighted) + 
+				parseFloat(nodes[parseInt(d.target)].title_count_weighted))
+			d.weight = d.weight / weight_norm
+			if(d.weight > maxw) {
+				maxw = d.weight
+			}
+		})
+		console.log('edges', edges, 'nodes', nodes, 'maxw', maxw)
+		var simulation = d3.forceSimulation(nodes)
+			.force('link', d3.forceLink(edges)
+				.id(d => d.id)
+				.distance(d => get_edge_attribute(d, 'link_distance'))
+				.strength(d => get_edge_attribute(d, 'link_strength'))
+			)
+			.force('charge', d3.forceManyBody().strength(-10))
+			.force('center', d3.forceCenter(width/2, height/2))
+			.force('window', function(alpha) {
+				nodes.forEach( n => {
+					if(n.x > width - border_w) {
+						n.x = width - border_w
+					} else if(n.x < border_w) {
+						n.x = border_w
+					}
+					if(n.y > height - border_h) {
+						n.y = height - border_h
+					} else if(n.y < border_h) {
+						n.y = border_h
+					}
+				})
+			})
+			.force('collide', d3.forceCollide(d => get_node_attribute(d, 'collide_radius')))
+
+		var link = svg.append('g')
+			.selectAll('line')
+			.data(edges)
+			.join('line')
+
+
+		var node = svg.append('g')
+			.selectAll('rect')
+			.data(nodes)
+			.join('rect')
+
+		var node_text = svg.append('g')
+		.selectAll('text')
+		.data(nodes)
+			.join('text')
+
+		mouseout({node: node, link: link, node_text: node_text})
+
+		node_text.call(drag(simulation)) // drag text around
+			.on('mouseover', (i, d) => mouseover(d, svg, {link: link, node: node, node_text: node_text}))
+			.on('mouseout', (i, d) => mouseout({node: node, link: link, node_text: node_text}))
+
+		simulation.on('tick', () => {
+			link
+				.attr("x1", d => d.source.x)
+				.attr("y1", d => d.source.y)
+				.attr("x2", d => d.target.x)
+				.attr("y2", d => d.target.y);
+			node
+				.attr("x", d => d.x - get_node_attribute(d, 'width') / 2)
+				.attr("y", d => d.y - get_node_attribute(d, 'height') / 2);
+			node_text
+				.attr("x", d => d.x)// - get_node_attribute(d, 'width') / 2)
+				.attr("y", d => d.y)// - get_node_attribute(d, 'height') / 2)
+		})
+		return {simulation: simulation, node: node, link: link}
+	}
+
+	function drag(simulation) {
+		function dragstarted(event) {
+			if (!event.active) simulation.alphaTarget(0.3).restart();
+			event.subject.fx = event.subject.x;
+			event.subject.fy = event.subject.y;
+		}
+		function dragged(event) {
+			event.subject.fx = event.x;
+			event.subject.fy = event.y;
+		}
+		function dragended(event) {
+			if (!event.active) simulation.alphaTarget(0);
+			event.subject.fx = null;
+			event.subject.fy = null;
+		}
+		return d3.drag()
+				.on("start", dragstarted)
+				.on("drag", dragged)
+				.on("end", dragended);
+	}
+	function nodes_relationships(d, visual_objects) {
+		out = []
+		visual_objects.link.forEach( edge => {
+			if(edge.target == d) {
+				out.push(edge.source.name)
+			} else if (edge.source == d) {
+				out.push(edge.target.name)
+			}
+		})
+	}
+
+	function mouseover(d, svg, visual_objects) {
+
+		// construct a list of related nodes
+		related = [d.name]
+		visual_objects.link._groups[0].forEach(edge => {
+			e = edge.__data__
+			if (e.source == d && (e.weight == null)) {
+				related.push(e.target.name)
+			} else if (e.target == d && (e.weight == null)) {
+				related.push(e.source.name)
+			}
+		})
+		console.log(related)
+
+		leaf_nodes = {} // holds mapping of name to opacity for leaf nodes.
+
+		// set edge opacity to filter only edges that end at one of the related
+		// nodes. Also populates leaf_nodes when called, so edge opacity should be
+		// set before text_opacity.
+		function get_edge_opacity(edge) {
+			// value to return if an edge is relevant
+			// this is the opacity that the stroke will be set to
+			retval_edge = get_edge_attribute(edge, 'stroke_opacity')
+
+			// this is the opacity that the text will be set to
+			retval_text = Math.sqrt(retval_edge)
+
+			// this is the opacity that null-weight edges will take
+			retval_null_edge = .5
+
+			// calculate leaf nodes
+			if (related.includes(edge.target.name)) {
+
+				if(edge.weight == null && (edge.source == d || edge.target == d))
+					return retval_null_edge
+				if(edge.weight != null)
+					leaf_nodes[edge.source.name] = retval_text
+				return retval_edge
+
+			} else if (related.includes(edge.source.name)) {
+				if(edge.weight == null && (edge.source == d || edge.target == d))
+					return retval_null_edge
+				if(edge.weight != null)
+					leaf_nodes[edge.target.name] = retval_text
+				return retval_edge
+			}
+
+			return 0 // edge is not relevant
+		}
+
+		// filter text to be at either end of one of the edges
+		visual_objects.link
+			.attr('stroke-opacity', get_edge_opacity)
+
+		related.forEach(d => leaf_nodes[d] = 1)
+
+
+		// set opacities. (if leaf_nodes has no attribute, it returns null and 0 opacity is set)
+		visual_objects.node_text.attr('fill-opacity',
+			function(d) {
+
+			return leaf_nodes[d.name]? leaf_nodes[d.name]:0
+			}
+		)
+		console.log(leaf_nodes)
+	}
+
+	function mouseout(objs) {
+		objs.link
+			.attr('stroke-width', d => get_edge_attribute(d, 'stroke_width'))
+			.attr('stroke', d => get_edge_attribute(d, 'stroke'))
+			.attr('stroke-opacity', d => get_edge_attribute(d, 'stroke_opacity'))
+
+		objs.node
+			.attr('width', d => get_node_attribute(d, "width"))
+			.attr('height', d => get_node_attribute(d, "height"))
+			.attr('stroke', d => get_node_attribute(d, "stroke"))
+			.attr('fill', d => get_node_attribute(d, "fill"))
+
+		objs.node_text
+			.text(d => get_node_attribute(d, 'text_content'))
+			.attr('stroke', d => get_node_attribute(d, 'text_stroke'))
+			.attr('fill', d => get_node_attribute(d, 'text_fill'))
+			.attr('stroke-width', d => .3)
+			.attr('font-weight', d => 'bold')
+			.style('text-anchor', 'middle')
+			.attr('font-size', d => 4 + d.title_count/400)
+			.attr('stroke-opacity', d => get_node_attribute(d, 'text_stroke_opacity'))
+			.attr('fill-opacity', d => get_node_attribute(d, 'text_fill_opacity'))
+
+	}
+
+
+	d3.csv('./data/netflix_genres/weighted_edges.csv').then(function(edges) {
+		d3.csv('./data/netflix_genres/nodes_seperated.csv?').then(function(nodes) {
+			function getnode_data(id) {
+				return nodes[int(id)];
+			}
+
+
+			const movie_nodes = nodes.filter(d => d.type == 'movie')
+			const tv_nodes = nodes.filter(d => d.type == 'tv')
+
+			const svg = d3.select('#my_dataviz')
+				.append('svg')
+				.attr('viewBox', [0,0,width,height])
+
+			res = createsimulation(svg,
+				nodes,
+				edges,
+			)
+		});
+	});
+
+</script>
