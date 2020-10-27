@@ -5,9 +5,14 @@
 <script src="https://d3js.org/d3.v6.js"></script>
 <!-- script src="source2.js"></script> -->
 
+<h1>
+Netflix Movie and TV Show Genres
+</h1>
+<h2>And how they co-occur</h2>
 <p>
-Movie and TV Show Genres.
+Netflix allows multiple genres to be associated with one title. Here is a visualization of how the genres co-occur. Text labels (nodes) refer to one genre and edges indicate how much the genres appear together. Hover over a genre to see its related genre(s) and the genres that co-occur with it.
 </p>
+<div id="my_dataviz"></div>
 <table>
 	<tr>
 		<th>On Overview &amp Hover</th>
@@ -38,13 +43,12 @@ Movie and TV Show Genres.
 	</tr>
 </table>
 <!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
 <style>
 </style>
 <script>
 
 	const width = 400,
-	      height = 400,
+	      height = 250,
 	      border_w = 40,
 	      border_h = 40;
 	const similar_edge = {
