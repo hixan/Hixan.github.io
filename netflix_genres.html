@@ -62,7 +62,8 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 	const width = 400,
 	      height = 250,
 	      border_w = 40,
-	      border_h = 40;
+	      border_h = 40,
+	      transition_duration = 300;
 	const similar_edge = {
 		link_distance: d => 10,
 		link_strength: d => 0.01,
@@ -290,7 +291,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 
 		// filter text to be at either end of one of the edges
 		visual_objects.link
-			.transition()
+			.transition().duration(transition_duration)
 			.attr('stroke-opacity', get_edge_opacity)
 
 		related.forEach(d => leaf_nodes[d] = 1)
@@ -298,7 +299,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 
 		// set opacities. (if leaf_nodes has no attribute, it returns null and 0 opacity is set)
 		visual_objects.node_text
-			.transition()
+			.transition().duration(transition_duration)
 			.attr('fill-opacity',
 			function(d) {
 
@@ -309,20 +310,20 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 
 	function mouseout(objs) {
 		objs.link
-			.transition()
+			.transition().duration(transition_duration)
 			.attr('stroke-width', d => get_edge_attribute(d, 'stroke_width'))
 			.attr('stroke', d => get_edge_attribute(d, 'stroke'))
 			.attr('stroke-opacity', d => get_edge_attribute(d, 'stroke_opacity'))
 
 		objs.node
-			.transition()
 			.attr('width', d => get_node_attribute(d, "width"))
 			.attr('height', d => get_node_attribute(d, "height"))
+			.transition().duration(transition_duration)
 			.attr('stroke', d => get_node_attribute(d, "stroke"))
 			.attr('fill', d => get_node_attribute(d, "fill"))
 
 		objs.node_text
-			.transition()
+			.transition().duration(transition_duration)
 			.text(d => get_node_attribute(d, 'text_content'))
 			.attr('stroke', d => get_node_attribute(d, 'text_stroke'))
 			.attr('fill', d => get_node_attribute(d, 'text_fill'))
