@@ -5,6 +5,20 @@
 <script src="https://d3js.org/d3.v6.js"></script>
 <!-- script src="source2.js"></script> -->
 
+<style>
+:root {
+	--movie-color:#c26e00;
+	--tv-color:#0a68ab;
+	--edge-color:#3a1515;
+}
+.tv {
+	color: var(--tv-color);
+}
+.movie {
+	color: var(--movie-color);
+}
+</style>
+
 <h1>
 Netflix Movie and TV Show Genres
 </h1>
@@ -22,7 +36,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 	<tr>
 		<td>
 			<ul style="font-size:Small">
-				<li> Text color: brown - TV genre, Blue - Movie genre
+				<li> Text color: <span class='tv'>TV genre</span>, <span class='movie'>Movie genre</span>
 				<li> Font size: bigger indicates more titles have that genre.
 				<li> Edge Opacity represents how frequently one genre occurs with another.
 			</ul>
@@ -43,8 +57,6 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 	</tr>
 </table>
 <!-- Create a div where the graph will take place -->
-<style>
-</style>
 <script>
 
 	const width = 400,
@@ -62,7 +74,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 	const data_edge = {
 		link_distance: d => 0,
 		stroke_width: d => 2,
-		stroke: d => '#000000',
+		stroke: d => getComputedStyle(document.documentElement).getPropertyValue('--edge-color'),
 		link_distance: d => 50,
 		link_strength: d => 0.1,
 		stroke_opacity: d => d.weight / maxw,
@@ -94,7 +106,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		text_stroke_width: d => 0,
 		text_stroke_opacity: d => 0,
 		text_fill_opacity: d => 1,
-		text_fill: d => '#306155',
+		text_fill: d => getComputedStyle(document.documentElement).getPropertyValue('--movie-color'),
 	}
 	const tv_node = {
 		width: d => nodeWidth(d),
@@ -108,6 +120,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		text_stroke_opacity: movie_node.text_stroke_opacity,
 		text_fill_opacity: movie_node.text_fill_opacity,
 		text_fill: d => '#806125',
+		text_fill: d => getComputedStyle(document.documentElement).getPropertyValue('--tv-color'),
 	}
 
 	function get_node_attribute(node, attribute) {
