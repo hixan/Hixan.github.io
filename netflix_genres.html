@@ -90,7 +90,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 	}
 
 	function nodeWidth(d) {
-		return 3
+		return Math.log((movie_node.text_font_size(d) - 4) * 10)
 	}
 	function nodeHeight(d) {
 		return 0
@@ -306,10 +306,15 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		visual_objects.node_text
 			.transition().duration(transition_duration)
 			.attr('fill-opacity',
-			function(d) {
-				return leaf_nodes[d.name]? leaf_nodes[d.name]:0
-			}
-		)
+				function(d) {
+					return leaf_nodes[d.name]? leaf_nodes[d.name]:0;
+				})
+		visual_objects.node
+			.transition().duration(transition_duration)
+			.attr('opacity',
+				function(d) {
+					return leaf_nodes[d.name]? leaf_nodes[d.name]:0;
+				})
 	}
 
 	function mouseout(objs) {
@@ -325,6 +330,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 			//.attr('height', d => get_node_attribute(d, "height"))
 			.attr('stroke', d => get_node_attribute(d, "stroke"))
 			.attr('fill', d => get_node_attribute(d, "fill"))
+			.attr('opacity', d => 1)
 
 		objs.node_text
 			.transition().duration(transition_duration)
