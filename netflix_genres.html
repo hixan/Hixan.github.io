@@ -90,7 +90,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 	}
 
 	function nodeWidth(d) {
-		return 0
+		return 3
 	}
 	function nodeHeight(d) {
 		return 0
@@ -100,21 +100,22 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		width: d => nodeWidth(d),
 		height: d => nodeHeight(d),
 		collide_radius: d => Math.random() * 10 + 10,
-		stroke: d => '#995500',
-		fill: d => '#839573',
+		stroke: d => '#FFFFFF',
+		fill: d => '#FFFFFF',
 		text_content: d => d.name,
 		text_stroke: d => '#FFFFFF',
 		text_stroke_width: d => 0,
 		text_stroke_opacity: d => 0,
 		text_fill_opacity: d => 1,
 		text_fill: d => getComputedStyle(document.documentElement).getPropertyValue('--movie-color'),
+		text_font_size: d => 4 + d.title_count/400,
 	}
 	const tv_node = {
 		width: d => nodeWidth(d),
 		height: d => nodeHeight(d),
 		collide_radius: d => Math.random() * 10 + 10,
-		stroke: d => '#995500',
-		fill: d => '#839573',
+		stroke: movie_node.stroke,
+		fill: movie_node.fill,
 		text_content: movie_node.text_content,
 		text_stroke: movie_node.text_stroke,
 		text_stroke_width: movie_node.text_stroke_width,
@@ -122,6 +123,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		text_fill_opacity: movie_node.text_fill_opacity,
 		text_fill: d => '#806125',
 		text_fill: d => getComputedStyle(document.documentElement).getPropertyValue('--tv-color'),
+		text_font_size: movie_node.text_font_size,
 	}
 
 	function get_node_attribute(node, attribute) {
@@ -178,9 +180,9 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 
 
 		var node = svg.append('g')
-			.selectAll('rect')
+			.selectAll('circle')
 			.data(nodes)
-			.join('rect')
+			.join('circle')
 
 		var node_text = svg.append('g')
 		.selectAll('text')
@@ -200,8 +202,8 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 				.attr("x2", d => d.target.x)
 				.attr("y2", d => d.target.y);
 			node
-				.attr("x", d => d.x - get_node_attribute(d, 'width') / 2)
-				.attr("y", d => d.y - get_node_attribute(d, 'height') / 2);
+				.attr("cx", d => d.x)
+				.attr("cy", d => d.y - get_node_attribute(d, 'text_font_size')/4);
 			node_text
 				.attr("x", d => d.x)// - get_node_attribute(d, 'width') / 2)
 				.attr("y", d => d.y)// - get_node_attribute(d, 'height') / 2)
@@ -292,6 +294,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		// filter text to be at either end of one of the edges
 		visual_objects.link
 			.transition().duration(transition_duration)
+		.attr('stroke-width', 3)
 			.attr('stroke-opacity', get_edge_opacity)
 
 		related.forEach(d => leaf_nodes[d] = 1)
@@ -316,9 +319,9 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 			.attr('stroke-opacity', d => get_edge_attribute(d, 'stroke_opacity'))
 
 		objs.node
-			.attr('width', d => get_node_attribute(d, "width"))
-			.attr('height', d => get_node_attribute(d, "height"))
 			.transition().duration(transition_duration)
+			.attr('r', d => get_node_attribute(d, "width"))
+			//.attr('height', d => get_node_attribute(d, "height"))
 			.attr('stroke', d => get_node_attribute(d, "stroke"))
 			.attr('fill', d => get_node_attribute(d, "fill"))
 
@@ -330,7 +333,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 			.attr('stroke-width', d => .3)
 			.attr('font-weight', d => 'bold')
 			.style('text-anchor', 'middle')
-			.attr('font-size', d => 4 + d.title_count/400)
+			.attr('font-size', d => get_node_attribute(d, 'text_font_size'))
 			.attr('stroke-opacity', d => get_node_attribute(d, 'text_stroke_opacity'))
 			.attr('fill-opacity', d => get_node_attribute(d, 'text_fill_opacity'))
 
