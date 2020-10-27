@@ -277,14 +277,16 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 				if(edge.weight == null && (edge.source == d || edge.target == d))
 					return retval_null_edge
 				if(edge.weight != null)
-					leaf_nodes[edge.source.name] = retval_text
+					// select maximum of current stored value and new would-be value
+					leaf_nodes[edge.source.name] = leaf_nodes[edge.source.name]?Math.max(leaf_nodes[edge.source.name], retval_text):retval_text;
 				return retval_edge
 
 			} else if (related.includes(edge.source.name)) {
 				if(edge.weight == null && (edge.source == d || edge.target == d))
 					return retval_null_edge
 				if(edge.weight != null)
-					leaf_nodes[edge.target.name] = retval_text
+					// select maximum of current stored value and new would-be value
+					leaf_nodes[edge.target.name] = leaf_nodes[edge.target.name]?Math.max(leaf_nodes[edge.target.name], retval_text):retval_text
 				return retval_edge
 			}
 
@@ -305,8 +307,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 			.transition().duration(transition_duration)
 			.attr('fill-opacity',
 			function(d) {
-
-			return leaf_nodes[d.name]? leaf_nodes[d.name]:0
+				return leaf_nodes[d.name]? leaf_nodes[d.name]:0
 			}
 		)
 	}
