@@ -9,6 +9,8 @@
 :root {
 	--movie-color:#c26e00;
 	--tv-color:#0a68ab;
+	--movie-node-color:#763200;
+	--tv-node-color:#05345d;
 	--edge-color:#555555;
 }
 .tv {
@@ -58,6 +60,80 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 </table>
 <!-- Create a div where the graph will take place -->
 <script>
+	//////////////////////////////////
+	// custom radius function force //
+	// taken from github:           //
+	//////////////////////////////////
+	// https://stackoverflow.com/questions/54035048/how-to-assign-the-center-of-d3-forceradial-dynamically-using-functions
+	function customRadial(radius, x, y) {
+
+		var constant = function(x) {
+			return function() {
+				return x;
+			};
+		};
+
+		var nodes,
+			strength = constant(0.1),
+			strengths,
+			radiuses,
+			xs,
+			ys;
+
+		if (typeof radius !== "function") radius = constant(+radius);
+		if (typeof x !== "function") x = constant(x == null ? 0 : +x);
+		if (typeof y !== "function") y = constant(y == null ? 0 : +y);
+
+		function force(alpha) {
+			for (var i = 0, n = nodes.length; i < n; ++i) {
+				var node = nodes[i],
+					dx = node.x - xs[i] || 1e-6,
+					dy = node.y - ys[i] || 1e-6,
+					r = Math.sqrt(dx * dx + dy * dy),
+					k = (radiuses[i] - r) * strengths[i] * alpha / r;
+				node.vx += dx * k;
+				node.vy += dy * k;
+			}
+		}
+
+		function initialize() {
+			if (!nodes) return;
+			var i, n = nodes.length;
+			strengths = new Array(n);
+			radiuses = new Array(n);
+			xs = new Array(n);
+			ys = new Array(n);
+			for (i = 0; i < n; ++i) {
+				radiuses[i] = +radius(nodes[i], i, nodes);
+				xs[i] = +x(nodes[i], i, nodes);
+				ys[i] = +y(nodes[i], i, nodes);
+				strengths[i] = isNaN(radiuses[i]) ? 0 : +strength(nodes[i], i, nodes);
+			}
+		}
+
+		force.initialize = function(_) {
+			nodes = _, initialize();
+		};
+
+		force.strength = function(_) {
+			return arguments.length ? (strength = typeof _ === "function" ? _ : constant(+_), initialize(), force) : strength;
+		};
+
+		force.radius = function(_) {
+			return arguments.length ? (radius = typeof _ === "function" ? _ : constant(+_), initialize(), force) : radius;
+		};
+
+		force.x = function(_) {
+			return arguments.length ? (x = typeof _ === "function" ? _ : constant(+_), initialize(), force) : x;
+		};
+
+		force.y = function(_) {
+			return arguments.length ? (y = typeof _ === "function" ? _ : constant(+_), initialize(), force) : y;
+		};
+
+		return force;
+	}
+	//////////////////////////////////
 
 	const width = 400,
 	      height = 250,
@@ -75,10 +151,30 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 	const data_edge = {
 		link_distance: d => 0,
 		stroke_width: d => 2,
-		stroke: d => getComputedStyle(document.documentElement).getPropertyValue('--edge-color'),
+		stroke: d => getComputedStyle(document.documentElement)
+				.getPropertyValue('--edge-color'),
 		link_distance: d => 50,
 		link_strength: d => 0.1,
 		stroke_opacity: d => d.weight / maxw,
+	}
+	function getTextHeight(text, font) {
+		// re-use canvas object for better performance
+		var canvas = getTextHeight.canvas || (
+			getTextHeight.canvas = document.createElement("canvas"));
+		var context = canvas.getContext("2d");
+		context.font = font;
+		var metrics = context.measureText(text);
+		return metrics.height;
+	}
+
+	function getTextWidth(text, font) {
+		// re-use canvas object for better performance
+		var canvas = getTextWidth.canvas || (
+			getTextWidth.canvas = document.createElement("canvas"));
+		var context = canvas.getContext("2d");
+		context.font = font;
+		var metrics = context.measureText(text);
+		return metrics.width;
 	}
 
 	function get_edge_attribute(edge, attribute) {
@@ -90,10 +186,22 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 	}
 
 	function nodeWidth(d) {
-		return Math.log((movie_node.text_font_size(d) - 4) * 10)
+		return d.title_count_weighted / 100
 	}
 	function nodeHeight(d) {
-		return 0
+		return 3
+	}
+	function cartesian2Polar(c){
+		distance = Math.sqrt(c.x*c.x + c.y*c.y)
+		radians = Math.atan2(c.y,c.x) //This takes y first
+		polarCoor = { r:distance, angle:radians }
+		return polarCoor
+	}
+	function polar2Cartesian(p) {
+		return {
+			x: Math.cos(p.angle) * p.r,
+			y: Math.sin(p.angle) * p.r
+		}
 	}
 
 	const movie_node = {
@@ -101,29 +209,77 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		height: d => nodeHeight(d),
 		collide_radius: d => Math.random() * 10 + 10,
 		stroke: d => '#FFFFFF',
-		fill: d => '#FFFFFF',
+		fill: d => getComputedStyle(document.documentElement)
+									.getPropertyValue('--movie-node-color'),
 		text_content: d => d.name,
+		text_content_width: d => getTextWidth(
+			get_node_attribute(d, 'text_content'),
+			get_node_attribute(d, 'text_font')) + 1,
+		text_content_height: d => 3,
 		text_stroke: d => '#FFFFFF',
 		text_stroke_width: d => 0,
 		text_stroke_opacity: d => 0,
 		text_fill_opacity: d => 1,
-		text_fill: d => getComputedStyle(document.documentElement).getPropertyValue('--movie-color'),
-		text_font_size: d => 4 + d.title_count/400,
+		text_fill: d => getComputedStyle(document.documentElement)
+		                   .getPropertyValue('--movie-color'),
+		text_font: d => 'bold 4pt arial',
+		text_transform: d => {
+			var cx = get_node_attribute(d, 'centered_x'),
+				cy = get_node_attribute(d, 'centered_y'),
+				x = d.x,
+				y = d.y;
+			y = cy-y;
+			x = cx-x;
+			// calculate translation
+			pol = cartesian2Polar({x, y})
+			angle = pol.angle
+			rot = ('rotate(' + angle * 180 / Math.PI +
+				',' + d.x + ',' + d.y + ') ')
+
+			// calculate translation
+			var textw = get_node_attribute(d, 'text_content_width')
+
+			r = pol.r
+			newr = r - textw - get_node_attribute(d, 'width')
+			cart = polar2Cartesian({r: newr, angle: angle})
+
+
+			trans_offset = 'translate(' + (cart.x - x) + ',' + (cart.y- y) + ')'
+			// translate to center with dot
+			t2 = polar2Cartesian({
+				angle: angle + Math.PI / 2,
+				r: get_node_attribute(d, 'text_content_height') / 2
+			})
+			translate_center = 'translate(' + t2.x + ',' + t2.y + ')'
+
+			return trans_offset + ' ' + translate_center + ' ' + rot
+		},
+		centered_x: d => width / 4,
+		centered_y: d => height / 2,
+		centered_r: d => height / 5
 	}
 	const tv_node = {
 		width: d => nodeWidth(d),
 		height: d => nodeHeight(d),
 		collide_radius: d => Math.random() * 10 + 10,
 		stroke: movie_node.stroke,
-		fill: movie_node.fill,
+		fill: d => getComputedStyle(document.documentElement)
+									.getPropertyValue('--tv-node-color'),
 		text_content: movie_node.text_content,
+		text_content_width: movie_node.text_content_width,
+		text_content_height: movie_node.text_content_height,
 		text_stroke: movie_node.text_stroke,
 		text_stroke_width: movie_node.text_stroke_width,
 		text_stroke_opacity: movie_node.text_stroke_opacity,
 		text_fill_opacity: movie_node.text_fill_opacity,
 		text_fill: d => '#806125',
-		text_fill: d => getComputedStyle(document.documentElement).getPropertyValue('--tv-color'),
-		text_font_size: movie_node.text_font_size,
+		text_fill: d => getComputedStyle(document.documentElement)
+		                   .getPropertyValue('--tv-color'),
+		text_font: movie_node.text_font,
+		text_transform: movie_node.text_transform,
+		centered_x: d => 3 * width / 4,
+		centered_y: d => height / 2,
+		centered_r: movie_node.centered_r
 	}
 
 	function get_node_attribute(node, attribute) {
@@ -155,23 +311,14 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 				.distance(d => get_edge_attribute(d, 'link_distance'))
 				.strength(d => get_edge_attribute(d, 'link_strength'))
 			)
-			.force('charge', d3.forceManyBody().strength(-10))
-			.force('center', d3.forceCenter(width/2, height/2))
-			.force('window', function(alpha) {
-				nodes.forEach( n => {
-					if(n.x > width - border_w) {
-						n.x = width - border_w
-					} else if(n.x < border_w) {
-						n.x = border_w
-					}
-					if(n.y > height - border_h) {
-						n.y = height - border_h
-					} else if(n.y < border_h) {
-						n.y = border_h
-					}
-				})
-			})
-			.force('collide', d3.forceCollide(d => get_node_attribute(d, 'collide_radius')))
+			.force('charge', d3.forceManyBody().strength(-200).distanceMax(width / 4))
+			//.force('center', d3.forceCenter(width/2, height/2))
+			.force('radial', customRadial()
+				.strength(10)
+				.radius(d => get_node_attribute(d, 'centered_r'))
+				.x(d => get_node_attribute(d, 'centered_x'))
+				.y(height/2)
+			)
 
 		var link = svg.append('g')
 			.selectAll('line')
@@ -183,6 +330,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 			.selectAll('circle')
 			.data(nodes)
 			.join('circle')
+			.attr('r', d => get_node_attribute(d, 'width'))
 
 		var node_text = svg.append('g')
 		.selectAll('text')
@@ -203,10 +351,11 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 				.attr("y2", d => d.target.y);
 			node
 				.attr("cx", d => d.x)
-				.attr("cy", d => d.y - get_node_attribute(d, 'text_font_size')/4);
+				.attr("cy", d => d.y)
 			node_text
 				.attr("x", d => d.x)// - get_node_attribute(d, 'width') / 2)
 				.attr("y", d => d.y)// - get_node_attribute(d, 'height') / 2)
+				.attr('transform', d => get_node_attribute(d, 'text_transform'))
 		})
 		return {simulation: simulation, node: node, link: link}
 	}
@@ -328,7 +477,8 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 			.transition().duration(transition_duration)
 			.attr('r', d => get_node_attribute(d, "width"))
 			//.attr('height', d => get_node_attribute(d, "height"))
-			.attr('stroke', d => get_node_attribute(d, "stroke"))
+			.attr('stroke-width', 0)
+			//.attr('stroke', d => get_node_attribute(d, "stroke"))
 			.attr('fill', d => get_node_attribute(d, "fill"))
 			.attr('opacity', d => 1)
 
@@ -338,9 +488,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 			.attr('stroke', d => get_node_attribute(d, 'text_stroke'))
 			.attr('fill', d => get_node_attribute(d, 'text_fill'))
 			.attr('stroke-width', d => .3)
-			.attr('font-weight', d => 'bold')
-			.style('text-anchor', 'middle')
-			.attr('font-size', d => get_node_attribute(d, 'text_font_size'))
+			.style('font', d => get_node_attribute(d, 'text_font'))
 			.attr('stroke-opacity', d => get_node_attribute(d, 'text_stroke_opacity'))
 			.attr('fill-opacity', d => get_node_attribute(d, 'text_fill_opacity'))
 
