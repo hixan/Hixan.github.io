@@ -7,11 +7,11 @@
 
 <style>
 :root {
-	--movie-color:#c26e00;
-	--tv-color:#0a68ab;
+	--movie-color:#e26e00;
+	--tv-color:#0a88cb;
 	--movie-node-color:#763200;
 	--tv-node-color:#05345d;
-	--edge-color:#555555;
+	--edge-color:#fff;
 }
 .tv {
 	color: var(--tv-color);
@@ -28,7 +28,7 @@ Netflix Movie and TV Show Genres
 <p>
 Netflix allows multiple genres to be associated with one title. Here is a visualization of how the genres co-occur. Text labels (nodes) refer to one genre and edges indicate how much the genres appear together. Hover over a genre to see its related genre(s) and the genres that co-occur with it.
 </p>
-<div id="my_dataviz"></div>
+<div id="my_dataviz" style="background-color:black"></div>
 <table>
 	<tr>
 		<th>On Overview &amp Hover</th>
@@ -211,7 +211,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		stroke: d => '#FFFFFF',
 		fill: d => getComputedStyle(document.documentElement)
 									.getPropertyValue('--movie-node-color'),
-		text_content: d => d.name,
+		text_content: d => d.name.replace('Movies', '').trim(),
 		text_content_width: d => getTextWidth(
 			get_node_attribute(d, 'text_content'),
 			get_node_attribute(d, 'text_font')) + 1,
@@ -254,9 +254,9 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 
 			return trans_offset + ' ' + translate_center + ' ' + rot
 		},
-		centered_x: d => width / 4,
+		centered_x: d => width * 0.7,
 		centered_y: d => height / 2,
-		centered_r: d => height / 5
+		centered_r: d => height / 4
 	}
 	const tv_node = {
 		width: d => nodeWidth(d),
@@ -265,7 +265,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		stroke: movie_node.stroke,
 		fill: d => getComputedStyle(document.documentElement)
 									.getPropertyValue('--tv-node-color'),
-		text_content: movie_node.text_content,
+		text_content: d => d.name.replace('TV Shows', '').replace('TV', '').trim(),
 		text_content_width: movie_node.text_content_width,
 		text_content_height: movie_node.text_content_height,
 		text_stroke: movie_node.text_stroke,
@@ -277,7 +277,7 @@ Netflix allows multiple genres to be associated with one title. Here is a visual
 		                   .getPropertyValue('--tv-color'),
 		text_font: movie_node.text_font,
 		text_transform: movie_node.text_transform,
-		centered_x: d => 3 * width / 4,
+		centered_x: d => width - movie_node.centered_x(d),
 		centered_y: d => height / 2,
 		centered_r: movie_node.centered_r
 	}
