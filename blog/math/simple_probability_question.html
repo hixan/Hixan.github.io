@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-03-03 Wed 10:40 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>"Simple" Distribution Sum</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Alex Elias" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">"Simple" Distribution Sum</h1>
+<div id="outline-container-org0dc973a" class="outline-2">
+<h2 id="org0dc973a"><span class="todo TODO">TODO</span> This blog post is a work in progress, and contains mistakes.</h2>
+</div>
+<div id="outline-container-orgda5d9bc" class="outline-2">
+<h2 id="orgda5d9bc">A Simple Distribution Question</h2>
+<div class="outline-text-2" id="text-orgda5d9bc">
+<p>
+A friend of mine recently completed some aptitude tests for a company they were applying to. Following their experience, they asked me if I could solve the question.
+</p>
+</div>
+<div id="outline-container-orgca4e0be" class="outline-3">
+<h3 id="orgca4e0be">The Question</h3>
+<div class="outline-text-3" id="text-orgca4e0be">
+<p>
+There are 4 desks accepting customers. The amount of time between each customer arriving at the desk follows exponential distributions; with \(\lambda = 2, 3, 4, 5\) respectively. All 4 desks have a supervisor, and will pass on an individual customer with probabilities \({1 \over 3}, {1 \over 5}, {1 \over 7}, {1 \over 11}\) respectively. What is the expected time between customers arriving at the supervisor?
+</p>
+
+
+<div id="org07f18d3" class="figure">
+<p><img src="images/4_desks_supervisor.jpg" alt="4_desks_supervisor.jpg" />
+</p>
+<p><span class="figure-number">Figure 1: </span>problem illustration, 4 streams of customers, each with their own desk to intercept and reject with a probability, summing to the manager.</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf5d289d" class="outline-3">
+<h3 id="orgf5d289d">Some Contextual Information</h3>
+<div class="outline-text-3" id="text-orgf5d289d">
+<p>
+an <a href="https://en.wikipedia.org/wiki/Exponential_distribution">exponential distribution</a> is has pdf \(f\left(x \middle| \lambda\right) = \lambda e^{-\lambda x}\), and has a mean of \({1 \over \lambda}\).
+</p>
+</div>
+</div>
+<div id="outline-container-org0e71f93" class="outline-3">
+<h3 id="org0e71f93">Initial Attempts</h3>
+<div class="outline-text-3" id="text-org0e71f93">
+<p>
+At its face, this looks like it has a simple solution! simply multiply the expectations by the probabilities and sum the results:
+</p>
+\begin{align*}
+&\frac{1}{3} \frac{1}{2}+\frac{1}{5} \frac{1}{3}+\frac{1}{7} \frac{1}{4}+\frac{1}{11} \frac{1}{5}\\
+=& \frac{1}{6} + \frac{1}{15} + \frac{1}{28} + \frac{1}{55}\\
+=& \frac{1327}{4620}\\
+\approx& 0.2872
+\end{align*}
+<p>
+This was the answer my friend gave, but it didnt sit quite right with me.
+</p>
+
+<p>
+If you only have one desk and one supervisor (figure <a href="#org18f30cf">2</a>), the amount of time between customers for the supervisor must be larger then the amount of time between customers for the desk, as the number of customers he sees can not exceed the number of customers that arrive at the desk. \(D \le S\) (where \(D\) is the desks incoming customers and \(S\) is the supervisors incoming customers)
+</p>
+
+
+<div id="org18f30cf" class="figure">
+<p><img src="images/1_desk_supervisor.jpg" alt="1_desk_supervisor.jpg" />
+</p>
+<p><span class="figure-number">Figure 2: </span>single desk sending customers to manager</p>
+</div>
+
+<p>
+Using our initial logic, we have \(p D = S\) where \(p\) is the probability that \(D\) passes on a customer. This introduces a contradiction, as \(p \le 1\) meaning that \({S \over p} = D \ge S\). What is wrong here?
+</p>
+
+<p>
+The answer is that by multiplying the probability by the expected time between customers, not the expected number of customers. To do the latter, we can convert \(D\) (units time / customer) to \({1 \over D}\) (units customer / time). We then multiply this quantity by the probability of passing on the customer and convert back to time / customer. This leaves us with \({D \over p}\). This follows the intuition we laid out above.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org127211c" class="outline-3">
+<h3 id="org127211c">The Second Problem</h3>
+<div class="outline-text-3" id="text-org127211c">
+<p>
+Taking the step outlined above requires us to sum customers per time <i>before</i> inverting. We are left with the following formula for the problem 
+</p>
+
+\begin{equation*}
+E\left[{1 \over \sum\limits_{i=1}^{4} {p_i \over \lambda_i}}\right]
+= \int\limits_{\Omega} { 1 \over
+  \sum\limits_{i=1}^{4}{p_i \over x_i}
+}
+ p\left(\bigcup\limits_{i=1}^{4}x_i\right)\prod_{i=1}^{4}\delta x_i
+= \iiiint_{\Omega}
+ {1 \over {p_1 \over x_1}+{p_2 \over x_2}+{p_3 \over x_3}+{p_4 \over x_4}}
+p\left(x_1\right) p\left(x_2\right) p\left(x_3\right) p\left(x_4\right)^*
+\delta x_1 \delta x_2 \delta x_3 \delta x_4
+\end{equation*}
+<p>
+\(^*\) - as \(x_i\) are independent
+</p>
+
+<p>
+which has no easy solution.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org26fca66" class="outline-3">
+<h3 id="org26fca66">The missing information and solution</h3>
+<div class="outline-text-3" id="text-org26fca66">
+<p>
+It turns out that this is a class of problem known as <a href="https://en.wikipedia.org/wiki/Poisson_point_process#Poisson_distribution_of_point_counts">poisson processes</a>, and they have a simple property.
+Adding multiple poisson processes results in another poisson process with \(\lambda_\Sigma = \lambda_1 + \lambda_2\).
+</p>
+</div>
+<div id="outline-container-org6c39e64" class="outline-4">
+<h4 id="org6c39e64"><span class="todo TODO">TODO</span> Proof</h4>
+<div class="outline-text-4" id="text-org6c39e64">
+<p>
+Now, the solution is much easier! we can transform \(\lambda_i\) directly with \(p_i\) (\(\lambda_i\) represents the customers / time) and sum them to get \(\lambda_\Sigma\):
+</p>
+\begin{equation*}
+\lambda_\Sigma = p_1\lambda_1 + p_2\lambda_2 + p_3\lambda_3 + p_4\lambda_4
+\end{equation*}
+<p>
+meaning that \(E\left[S\right] = {1 \over \lambda_\Sigma} = {1 \over {p_1\lambda_1 + p_2\lambda_2 + p_3\lambda_3 + p_4\lambda_4}}\)
+Plugging in the numbers gives us an answer of \(\frac{2648}{1155} \approx 2.2926\).
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org733c727" class="outline-3">
+<h3 id="org733c727">Checking with a simulation</h3>
+<div class="outline-text-3" id="text-org733c727">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #4c83ff;">import</span> numpy <span style="color: #4c83ff;">as</span> np
+np.set_printoptions<span style="color: #8b0000;">(</span>precision=<span style="color: #96CBFE;">2</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #ff69b4;">simulation_count</span> = <span style="color: #96CBFE;">1000000</span>
+<span style="color: #ff69b4;">lambdas</span> = np.array<span style="color: #8b0000;">(</span><span style="color: #006400;">[</span><span style="color: #96CBFE;">2</span>, <span style="color: #96CBFE;">3</span>, <span style="color: #96CBFE;">4</span>, <span style="color: #96CBFE;">5</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
+<span style="color: #ff69b4;">probabilities</span> = <span style="color: #96CBFE;">1</span> / np.array<span style="color: #8b0000;">(</span><span style="color: #006400;">[</span><span style="color: #96CBFE;">3</span>, <span style="color: #96CBFE;">5</span>, <span style="color: #96CBFE;">7</span>, <span style="color: #96CBFE;">11</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">draw from exponential distribution for all desks</span>
+<span style="color: #ff69b4;">gaps</span> = np.random.exponential<span style="color: #8b0000;">(</span>lambdas, <span style="color: #006400;">(</span>simulation_count, <span style="color: #4c83ff;">len</span><span style="color: #ff1493;">(</span>lambdas<span style="color: #ff1493;">)</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">turn into timestamps</span>
+<span style="color: #ff69b4;">times</span> = np.cumsum<span style="color: #8b0000;">(</span>gaps, axis=<span style="color: #96CBFE;">0</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">draw from each column according to distribution</span>
+<span style="color: #ff69b4;">pass_on</span> = np.random.uniform<span style="color: #8b0000;">(</span>size=times.shape<span style="color: #8b0000;">)</span> &lt; probabilities
+
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">sanity check - are the correct probabilites demonstrated and the correct</span>
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">lambdas?</span>
+<span style="color: #4c83ff;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'simulated probabilities:'</span>, p_e:= np.mean<span style="color: #006400;">(</span>pass_on, axis=<span style="color: #96CBFE;">0</span><span style="color: #006400;">)</span>, <span style="color: #61CE3C;">'expected:'</span>,
+        probabilities, <span style="color: #61CE3C;">'\ndiff:'</span>, p_e - probabilities, end=<span style="color: #61CE3C;">'\n\n'</span><span style="color: #8b0000;">)</span>
+<span style="color: #4c83ff;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'simultated lambdas:'</span>, l_e := np.mean<span style="color: #006400;">(</span>gaps, axis=<span style="color: #96CBFE;">0</span><span style="color: #006400;">)</span>, <span style="color: #61CE3C;">'expected:'</span>,
+        lambdas, <span style="color: #61CE3C;">'\ndiff:'</span>, l_e - lambdas, end=<span style="color: #61CE3C;">'\n\n'</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">concatenate arrays and remove unwanted</span>
+<span style="color: #ff69b4;">supervisor</span> = np.sort<span style="color: #8b0000;">(</span>np.concatenate<span style="color: #006400;">(</span>times<span style="color: #006400;">)[</span>np.concatenate<span style="color: #ff1493;">(</span>pass_on<span style="color: #ff1493;">)</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">remove any past the last entry of the shortest simulation (to ensure all</span>
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">streams run for the same amount of time)</span>
+<span style="color: #ff69b4;">supervisor</span> = supervisor<span style="color: #8b0000;">[</span>supervisor &lt; np.<span style="color: #4c83ff;">min</span><span style="color: #006400;">(</span>times<span style="color: #ff1493;">[</span>-<span style="color: #96CBFE;">1</span>,:<span style="color: #ff1493;">]</span><span style="color: #006400;">)</span><span style="color: #8b0000;">]</span>
+
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">print the final estimate</span>
+<span style="color: #4c83ff;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'the mean time between customers for the supervisor was'</span>,
+        np.diff<span style="color: #006400;">(</span>supervisor<span style="color: #006400;">)</span>.mean<span style="color: #006400;">()</span><span style="color: #8b0000;">)</span>
+</pre>
+</div>
+
+<pre class="example">
+simulated probabilities: [0.33 0.2  0.14 0.09] expected: [0.33 0.2  0.14 0.09] 
+diff: [-1.03e-05 -2.06e-04 -4.30e-04 -2.28e-04]
+
+simultated lambdas: [2. 3. 4. 5.] expected: [2 3 4 5] 
+diff: [-0. -0.  0. -0.]
+
+the mean time between customers for the supervisor was 3.482046628803334
+</pre>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
