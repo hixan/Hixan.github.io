@@ -1,14 +1,13 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
 #+options: toc:nil html-postamble:nil num:nil
 #+title: "Simple" Distribution Sum
-* TODO This blog post is a work in progress, and contains mistakes.
 * A Simple Distribution Question
   A friend of mine recently completed some aptitude tests for a company they were applying to. Following their experience, they asked me if I could solve the question.
 ** The Question
    There are 4 desks accepting customers. The amount of time between each customer arriving at the desk follows exponential distributions; with $\lambda = 2, 3, 4, 5$ respectively. All 4 desks have a supervisor, and will pass on an individual customer with probabilities ${1 \over 3}, {1 \over 5}, {1 \over 7}, {1 \over 11}$ respectively. What is the expected time between customers arriving at the supervisor?
 
 #+name: 4desks
-#+begin_src dot :file images/4_desks_supervisor.jpg :exports results
+#+begin_src dot :file ./images/4_desks_supervisor.jpg :exports results
 digraph {
       cust_1 [label="Customer Stream 1"]
       cust_2 [label="Customer Stream 2"]
@@ -53,7 +52,7 @@ digraph {
    If you only have one desk and one supervisor (figure [[fig:1desk]]), the amount of time between customers for the supervisor must be larger then the amount of time between customers for the desk, as the number of customers he sees can not exceed the number of customers that arrive at the desk. $D \le S$ (where $D$ is the desks incoming customers and $S$ is the supervisors incoming customers)
    
 #+name: 1desk
-#+begin_src dot :file images/1_desk_supervisor.jpg :exports results
+#+begin_src dot :file ./images/1_desk_supervisor.jpg :exports results
 digraph {
       cust_1 [label="Customer Stream"]
       
@@ -70,7 +69,7 @@ digraph {
 #+caption: single desk sending customers to manager
 #+label: fig:1desk
 #+RESULTS: 1desk
-[[file:images/1_desk_supervisor.jpg]]
+[[file:./images/1_desk_supervisor.jpg]]
 
 Using our initial logic, we have $p D = S$ where $p$ is the probability that $D$ passes on a customer. This introduces a contradiction, as $p \le 1$ meaning that ${S \over p} = D \ge S$. What is wrong here?
 
@@ -104,50 +103,24 @@ which has no easy solution.
 \lambda_\Sigma = p_1\lambda_1 + p_2\lambda_2 + p_3\lambda_3 + p_4\lambda_4
 \end{equation*}
 meaning that $E\left[S\right] = {1 \over \lambda_\Sigma} = {1 \over {p_1\lambda_1 + p_2\lambda_2 + p_3\lambda_3 + p_4\lambda_4}}$
-Plugging in the numbers gives us an answer of $\frac{2648}{1155} \approx 2.2926$.
+Plugging in the numbers gives us an answer of $\frac{1155}{2648} \approx 0.4362$.
 ** Checking with a simulation
 
-#+begin_src python :exports both :tangle simple_probability_question_sim.py :results output
-import numpy as np
-np.set_printoptions(precision=2)
+#+INCLUDE: "simple_probability_question_sim.py" src python
 
-simulation_count = 1000000
-lambdas = np.array([2, 3, 4, 5])
-probabilities = 1 / np.array([3, 5, 7, 11])
-
-# draw from exponential distribution for all desks
-gaps = np.random.exponential(lambdas, (simulation_count, len(lambdas)))
-
-# turn into timestamps
-times = np.cumsum(gaps, axis=0)
-
-# draw from each column according to distribution
-pass_on = np.random.uniform(size=times.shape) < probabilities
-
-# sanity check - are the correct probabilites demonstrated and the correct
-# lambdas?
-print('simulated probabilities:', p_e:= np.mean(pass_on, axis=0), 'expected:',
-        probabilities, '\ndiff:', p_e - probabilities, end='\n\n')
-print('simultated lambdas:', l_e := np.mean(gaps, axis=0), 'expected:',
-        lambdas, '\ndiff:', l_e - lambdas, end='\n\n')
-
-# concatenate arrays and remove unwanted
-supervisor = np.sort(np.concatenate(times)[np.concatenate(pass_on)])
-
-# remove any past the last entry of the shortest simulation (to ensure all
-# streams run for the same amount of time)
-supervisor = supervisor[supervisor < np.min(times[-1,:])]
-
-# print the final estimate
-print('the mean time between customers for the supervisor was',
-        np.diff(supervisor).mean())
+#+begin_src bash :results output :exports results
+python simple_probability_question_sim.py
 #+end_src
 
 #+RESULTS:
 : simulated probabilities: [0.33 0.2  0.14 0.09] expected: [0.33 0.2  0.14 0.09] 
-: diff: [ 0. -0. -0.  0.]
+: diff: [ 0.  0. -0. -0.]
 : 
-: simultated lambdas: [2. 3. 4. 5.] expected: [2 3 4 5] 
-: diff: [0. 0. 0. 0.]
+: simultated lambdas: [0.5  0.33 0.25 0.2 ] expected: [2 3 4 5] 
+: diff: [-1.5  -2.67 -3.75 -4.8 ]
 : 
-: the mean time between customers for the supervisor was 3.483337004042452
+: the mean time between customers for the supervisor was 0.4375769981538144 
+: This is accurate to 0.32%.
+
+** Bonus visualization
+   

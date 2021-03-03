@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-03-03 Wed 10:40 -->
+<!-- 2021-03-03 Wed 12:36 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>"Simple" Distribution Sum</title>
@@ -242,43 +242,40 @@
 <body>
 <div id="content">
 <h1 class="title">"Simple" Distribution Sum</h1>
-<div id="outline-container-org0dc973a" class="outline-2">
-<h2 id="org0dc973a"><span class="todo TODO">TODO</span> This blog post is a work in progress, and contains mistakes.</h2>
-</div>
-<div id="outline-container-orgda5d9bc" class="outline-2">
-<h2 id="orgda5d9bc">A Simple Distribution Question</h2>
-<div class="outline-text-2" id="text-orgda5d9bc">
+<div id="outline-container-org372681d" class="outline-2">
+<h2 id="org372681d">A Simple Distribution Question</h2>
+<div class="outline-text-2" id="text-org372681d">
 <p>
 A friend of mine recently completed some aptitude tests for a company they were applying to. Following their experience, they asked me if I could solve the question.
 </p>
 </div>
-<div id="outline-container-orgca4e0be" class="outline-3">
-<h3 id="orgca4e0be">The Question</h3>
-<div class="outline-text-3" id="text-orgca4e0be">
+<div id="outline-container-orgd944b60" class="outline-3">
+<h3 id="orgd944b60">The Question</h3>
+<div class="outline-text-3" id="text-orgd944b60">
 <p>
 There are 4 desks accepting customers. The amount of time between each customer arriving at the desk follows exponential distributions; with \(\lambda = 2, 3, 4, 5\) respectively. All 4 desks have a supervisor, and will pass on an individual customer with probabilities \({1 \over 3}, {1 \over 5}, {1 \over 7}, {1 \over 11}\) respectively. What is the expected time between customers arriving at the supervisor?
 </p>
 
 
-<div id="org07f18d3" class="figure">
-<p><img src="images/4_desks_supervisor.jpg" alt="4_desks_supervisor.jpg" />
+<div id="org54a0b62" class="figure">
+<p><img src="./images/4_desks_supervisor.jpg" alt="4_desks_supervisor.jpg" />
 </p>
 <p><span class="figure-number">Figure 1: </span>problem illustration, 4 streams of customers, each with their own desk to intercept and reject with a probability, summing to the manager.</p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgf5d289d" class="outline-3">
-<h3 id="orgf5d289d">Some Contextual Information</h3>
-<div class="outline-text-3" id="text-orgf5d289d">
+<div id="outline-container-org60ef404" class="outline-3">
+<h3 id="org60ef404">Some Contextual Information</h3>
+<div class="outline-text-3" id="text-org60ef404">
 <p>
 an <a href="https://en.wikipedia.org/wiki/Exponential_distribution">exponential distribution</a> is has pdf \(f\left(x \middle| \lambda\right) = \lambda e^{-\lambda x}\), and has a mean of \({1 \over \lambda}\).
 </p>
 </div>
 </div>
-<div id="outline-container-org0e71f93" class="outline-3">
-<h3 id="org0e71f93">Initial Attempts</h3>
-<div class="outline-text-3" id="text-org0e71f93">
+<div id="outline-container-org633f619" class="outline-3">
+<h3 id="org633f619">Initial Attempts</h3>
+<div class="outline-text-3" id="text-org633f619">
 <p>
 At its face, this looks like it has a simple solution! simply multiply the expectations by the probabilities and sum the results:
 </p>
@@ -293,12 +290,12 @@ This was the answer my friend gave, but it didnt sit quite right with me.
 </p>
 
 <p>
-If you only have one desk and one supervisor (figure <a href="#org18f30cf">2</a>), the amount of time between customers for the supervisor must be larger then the amount of time between customers for the desk, as the number of customers he sees can not exceed the number of customers that arrive at the desk. \(D \le S\) (where \(D\) is the desks incoming customers and \(S\) is the supervisors incoming customers)
+If you only have one desk and one supervisor (figure <a href="#org2098db6">2</a>), the amount of time between customers for the supervisor must be larger then the amount of time between customers for the desk, as the number of customers he sees can not exceed the number of customers that arrive at the desk. \(D \le S\) (where \(D\) is the desks incoming customers and \(S\) is the supervisors incoming customers)
 </p>
 
 
-<div id="org18f30cf" class="figure">
-<p><img src="images/1_desk_supervisor.jpg" alt="1_desk_supervisor.jpg" />
+<div id="org2098db6" class="figure">
+<p><img src="./images/1_desk_supervisor.jpg" alt="1_desk_supervisor.jpg" />
 </p>
 <p><span class="figure-number">Figure 2: </span>single desk sending customers to manager</p>
 </div>
@@ -313,9 +310,9 @@ The answer is that by multiplying the probability by the expected time between c
 </div>
 </div>
 
-<div id="outline-container-org127211c" class="outline-3">
-<h3 id="org127211c">The Second Problem</h3>
-<div class="outline-text-3" id="text-org127211c">
+<div id="outline-container-org8022e1a" class="outline-3">
+<h3 id="org8022e1a">The Second Problem</h3>
+<div class="outline-text-3" id="text-org8022e1a">
 <p>
 Taking the step outlined above requires us to sum customers per time <i>before</i> inverting. We are left with the following formula for the problem 
 </p>
@@ -341,17 +338,17 @@ which has no easy solution.
 </div>
 </div>
 
-<div id="outline-container-org26fca66" class="outline-3">
-<h3 id="org26fca66">The missing information and solution</h3>
-<div class="outline-text-3" id="text-org26fca66">
+<div id="outline-container-org4b855c9" class="outline-3">
+<h3 id="org4b855c9">The missing information and solution</h3>
+<div class="outline-text-3" id="text-org4b855c9">
 <p>
 It turns out that this is a class of problem known as <a href="https://en.wikipedia.org/wiki/Poisson_point_process#Poisson_distribution_of_point_counts">poisson processes</a>, and they have a simple property.
 Adding multiple poisson processes results in another poisson process with \(\lambda_\Sigma = \lambda_1 + \lambda_2\).
 </p>
 </div>
-<div id="outline-container-org6c39e64" class="outline-4">
-<h4 id="org6c39e64"><span class="todo TODO">TODO</span> Proof</h4>
-<div class="outline-text-4" id="text-org6c39e64">
+<div id="outline-container-org9232063" class="outline-4">
+<h4 id="org9232063"><span class="todo TODO">TODO</span> Proof</h4>
+<div class="outline-text-4" id="text-org9232063">
 <p>
 Now, the solution is much easier! we can transform \(\lambda_i\) directly with \(p_i\) (\(\lambda_i\) represents the customers / time) and sum them to get \(\lambda_\Sigma\):
 </p>
@@ -360,24 +357,28 @@ Now, the solution is much easier! we can transform \(\lambda_i\) directly with \
 \end{equation*}
 <p>
 meaning that \(E\left[S\right] = {1 \over \lambda_\Sigma} = {1 \over {p_1\lambda_1 + p_2\lambda_2 + p_3\lambda_3 + p_4\lambda_4}}\)
-Plugging in the numbers gives us an answer of \(\frac{2648}{1155} \approx 2.2926\).
+Plugging in the numbers gives us an answer of \(\frac{1155}{2648} \approx 0.4362\).
 </p>
 </div>
 </div>
 </div>
-<div id="outline-container-org733c727" class="outline-3">
-<h3 id="org733c727">Checking with a simulation</h3>
-<div class="outline-text-3" id="text-org733c727">
+<div id="outline-container-org8f42310" class="outline-3">
+<h3 id="org8f42310">Checking with a simulation</h3>
+<div class="outline-text-3" id="text-org8f42310">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #4c83ff;">import</span> numpy <span style="color: #4c83ff;">as</span> np
+<span style="color: #4c83ff;">from</span> pathlib <span style="color: #4c83ff;">import</span> Path
+
 np.set_printoptions<span style="color: #8b0000;">(</span>precision=<span style="color: #96CBFE;">2</span><span style="color: #8b0000;">)</span>
 
-<span style="color: #ff69b4;">simulation_count</span> = <span style="color: #96CBFE;">1000000</span>
+
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">simulation inputs</span>
+<span style="color: #ff69b4;">simulation_count</span> = <span style="color: #96CBFE;">100000</span>
 <span style="color: #ff69b4;">lambdas</span> = np.array<span style="color: #8b0000;">(</span><span style="color: #006400;">[</span><span style="color: #96CBFE;">2</span>, <span style="color: #96CBFE;">3</span>, <span style="color: #96CBFE;">4</span>, <span style="color: #96CBFE;">5</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
 <span style="color: #ff69b4;">probabilities</span> = <span style="color: #96CBFE;">1</span> / np.array<span style="color: #8b0000;">(</span><span style="color: #006400;">[</span><span style="color: #96CBFE;">3</span>, <span style="color: #96CBFE;">5</span>, <span style="color: #96CBFE;">7</span>, <span style="color: #96CBFE;">11</span><span style="color: #006400;">]</span><span style="color: #8b0000;">)</span>
 
 <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">draw from exponential distribution for all desks</span>
-<span style="color: #ff69b4;">gaps</span> = np.random.exponential<span style="color: #8b0000;">(</span>lambdas, <span style="color: #006400;">(</span>simulation_count, <span style="color: #4c83ff;">len</span><span style="color: #ff1493;">(</span>lambdas<span style="color: #ff1493;">)</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
+<span style="color: #ff69b4;">gaps</span> = np.random.exponential<span style="color: #8b0000;">(</span><span style="color: #96CBFE;">1</span>/lambdas, <span style="color: #006400;">(</span>simulation_count, <span style="color: #4c83ff;">len</span><span style="color: #ff1493;">(</span>lambdas<span style="color: #ff1493;">)</span><span style="color: #006400;">)</span><span style="color: #8b0000;">)</span>
 
 <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">turn into timestamps</span>
 <span style="color: #ff69b4;">times</span> = np.cumsum<span style="color: #8b0000;">(</span>gaps, axis=<span style="color: #96CBFE;">0</span><span style="color: #8b0000;">)</span>
@@ -401,20 +402,52 @@ np.set_printoptions<span style="color: #8b0000;">(</span>precision=<span style="
 
 <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">print the final estimate</span>
 <span style="color: #4c83ff;">print</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'the mean time between customers for the supervisor was'</span>,
-        np.diff<span style="color: #006400;">(</span>supervisor<span style="color: #006400;">)</span>.mean<span style="color: #006400;">()</span><span style="color: #8b0000;">)</span>
+        res := np.diff<span style="color: #006400;">(</span>supervisor<span style="color: #006400;">)</span>.mean<span style="color: #006400;">()</span>, <span style="color: #61CE3C;">'\nThis is accurate to'</span>
+        f<span style="color: #61CE3C;">' {np.abs(res - 1155/2648)/1155*2648 * 100:.2f}%.'</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">Bonus: save data for visualization</span>
+<span style="color: #4c83ff;">import</span> json
+
+<span style="color: #ff69b4;">data_size</span> = <span style="color: #96CBFE;">500</span>  <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">number of samples to save</span>
+<span style="color: #ff69b4;">maxtime</span> = supervisor<span style="color: #8b0000;">[</span>data_size<span style="color: #8b0000;">]</span>
+
+<span style="color: #ff69b4;">save_path</span> = <span style="color: #8b0000;">(</span>Path<span style="color: #006400;">(</span>__file__<span style="color: #006400;">)</span>.parent / <span style="color: #61CE3C;">'data'</span> /
+        <span style="color: #61CE3C;">'simple_probability_question_dat.json'</span><span style="color: #8b0000;">)</span>
+
+<span style="color: #ff69b4;">data_export</span> = <span style="color: #8b0000;">[</span>
+    <span style="color: #006400;">{</span>
+        <span style="color: #61CE3C;">'probability'</span>: p,
+        <span style="color: #61CE3C;">'lambda'</span>: l,
+    <span style="color: #8B8989; font-style: italic;"># </span><span style="color: #8B8989; font-style: italic;">rounding saves a lot of disk space (important as it will be served)</span>
+        <span style="color: #61CE3C;">'times'</span>: np.<span style="color: #4c83ff;">round</span><span style="color: #ff1493;">(</span>t<span style="color: #ffff00;">[</span>t &lt;= maxtime<span style="color: #ffff00;">]</span>, <span style="color: #96CBFE;">2</span><span style="color: #ff1493;">)</span>.tolist<span style="color: #ff1493;">()</span>
+    <span style="color: #006400;">}</span>
+    <span style="color: #4c83ff;">for</span> p, l, t <span style="color: #4c83ff;">in</span> <span style="color: #4c83ff;">zip</span><span style="color: #006400;">(</span>
+        probabilities.astype<span style="color: #ff1493;">(</span><span style="color: #4c83ff;">float</span><span style="color: #ff1493;">)</span>,
+        lambdas.astype<span style="color: #ff1493;">(</span><span style="color: #4c83ff;">float</span><span style="color: #ff1493;">)</span>,
+        times.T.astype<span style="color: #ff1493;">(</span><span style="color: #4c83ff;">float</span><span style="color: #ff1493;">)</span>
+    <span style="color: #006400;">)</span>
+<span style="color: #8b0000;">]</span>
+
+<span style="color: #4c83ff;">with</span> save_path.<span style="color: #4c83ff;">open</span><span style="color: #8b0000;">(</span><span style="color: #61CE3C;">'w'</span><span style="color: #8b0000;">)</span> <span style="color: #4c83ff;">as</span> f:
+    json.dump<span style="color: #8b0000;">(</span>data_export, f<span style="color: #8b0000;">)</span>
 </pre>
 </div>
 
 <pre class="example">
 simulated probabilities: [0.33 0.2  0.14 0.09] expected: [0.33 0.2  0.14 0.09] 
-diff: [-1.03e-05 -2.06e-04 -4.30e-04 -2.28e-04]
+diff: [ 0. -0.  0. -0.]
 
-simultated lambdas: [2. 3. 4. 5.] expected: [2 3 4 5] 
-diff: [-0. -0.  0. -0.]
+simultated lambdas: [0.5  0.33 0.25 0.2 ] expected: [2 3 4 5] 
+diff: [-1.5  -2.67 -3.75 -4.8 ]
 
-the mean time between customers for the supervisor was 3.482046628803334
+the mean time between customers for the supervisor was 0.4386445872108465 
+This is accurate to 0.57%.
 </pre>
 </div>
+</div>
+
+<div id="outline-container-org6140f75" class="outline-3">
+<h3 id="org6140f75">Bonus visualization</h3>
 </div>
 </div>
 </div>
